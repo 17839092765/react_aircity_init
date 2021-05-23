@@ -1,6 +1,7 @@
 import { FC, useEffect } from "react";
 import "./App.css";
-
+import { useDispatch } from "react-redux";
+import { Clickevent } from "./util/clickEvent";
 import "./assets/reset.css";
 import Home from "./pages/home/home";
 
@@ -12,8 +13,10 @@ declare const window: Window & {
   // getQueryVariable: any;
 };
 const App: FC = () => {
+  const Dispatch = useDispatch();
   const onEvent = (e: any) => {
     console.log(e, "模型交互的回调");
+    Clickevent(e);
     // if (1) {
     //   let wrap: any = document.getElementById("wrap");
     //   console.log(wrap);
@@ -25,41 +28,41 @@ const App: FC = () => {
     //     wrap.style.zIndex = "-10";
     //   }, 300);
     // }
-    // Dispatch({
-    //   type: "EDATA",
-    //   state: e,
-    // });
+    Dispatch({
+      type: "EDATA",
+      state: e,
+    });
   };
   const log = (e: any) => {
     // console.log(e);
   };
-  const getMatchServerConfig = (host: any, fn: any, callbackIndex: any) => {
-    if ("WebSocket" in window) {
-      var url = `ws://${host}`;
-      let __fn = fn;
-
-      var ws = new WebSocket(url);
-      ws.onopen = function () {
-        this.send(
-          JSON.stringify({
-            command: 6,
-            callbackIndex: callbackIndex,
-          })
-        );
-      };
-
-      ws.onmessage = function (event) {
-        var o = JSON.parse(event.data);
-        __fn(o);
-      };
-      ws.onclose = function () {};
-      ws.onerror = function (event) {};
-    } else {
-      log("Not Support WebSocket!");
-    }
-  };
 
   useEffect(() => {
+    const getMatchServerConfig = (host: any, fn: any, callbackIndex: any) => {
+      if ("WebSocket" in window) {
+        var url = `ws://${host}`;
+        let __fn = fn;
+
+        var ws = new WebSocket(url);
+        ws.onopen = function () {
+          this.send(
+            JSON.stringify({
+              command: 6,
+              callbackIndex: callbackIndex,
+            })
+          );
+        };
+
+        ws.onmessage = function (event) {
+          var o = JSON.parse(event.data);
+          __fn(o);
+        };
+        ws.onclose = function () {};
+        ws.onerror = function (event) {};
+      } else {
+        log("Not Support WebSocket!");
+      }
+    };
     const initInterface = (withPlayer: boolean, withApi: boolean) => {
       //AirCityPlayer
       if (withPlayer) {
