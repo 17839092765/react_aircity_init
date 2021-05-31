@@ -17,7 +17,7 @@ export default (state: Edata = initialState, action: AnyAction) => {
   switch (action.type) {
     case types.EDATA:
       console.log(action, 88888888);
-      // payload为传入的参数
+      // state为传入的参数
       return { edata: action.state };
     default:
       return state;

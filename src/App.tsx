@@ -2,6 +2,8 @@ import { FC, useEffect } from "react";
 import "./App.css";
 import { useDispatch } from "react-redux";
 import { Clickevent } from "./util/clickEvent";
+import { isOnReady } from "./store/action_types";
+
 import "./assets/reset.css";
 import Home from "./pages/home/home";
 
@@ -14,25 +16,7 @@ declare const window: Window & {
 };
 const App: FC = () => {
   const Dispatch = useDispatch();
-  const onEvent = (e: any) => {
-    console.log(e, "模型交互的回调");
-    Clickevent(e);
-    // if (1) {
-    //   let wrap: any = document.getElementById("wrap");
-    //   console.log(wrap);
-    //   wrap.style.zIndex = "1000";
-    //   if (timer !== null) {
-    //     clearTimeout(timer);
-    //   }
-    //   timer = setTimeout(() => {
-    //     wrap.style.zIndex = "-10";
-    //   }, 300);
-    // }
-    Dispatch({
-      type: "EDATA",
-      state: e,
-    });
-  };
+
   const log = (e: any) => {
     // console.log(e);
   };
@@ -88,8 +72,14 @@ const App: FC = () => {
           {
             onReady: () => {
               //此时可以调用接口了
-              window.__g.camera.get((r: any) => {
-                log(`Camera: ${r.x}, ${r.y}, ${r.z}, ${r.pitch}, ${r.yaw}`);
+              // window.__g.camera.get((r: any) => {
+              //   log(`Camera: ${r.x}, ${r.y}, ${r.z}, ${r.pitch}, ${r.yaw}`);
+              // });
+              console.log("此时可以调用接口了");
+              // 发送实例加载完成的信号
+              Dispatch({
+                type: isOnReady,
+                isOnReady: true,
               });
             },
             // 'onApiVersion': (vNo, vType) => {
@@ -121,7 +111,7 @@ const App: FC = () => {
       getMatchServerConfig(
         window.HostConfig.MatchServer,
         function (o: { result: number; instanceId: any }) {
-          console.log(o, "打印o");
+          console.log(o, "实例信息");
 
           if (o.result === 0) {
             window.HostConfig.instanceId = o.instanceId;
@@ -147,8 +137,30 @@ const App: FC = () => {
     const onload = () => {
       init(true, true);
     };
+    const onResize = () => {
+      let player: any = document.getElementById("player");
+      player.style.height = window.innerHeight + "px";
+      player.style.width = window.innerWidth + "px";
+    };
+    const onEvent = (e: any) => {
+      console.log(e, "所有模型交互的回调--没有业务逻辑");
+      Clickevent(e);
+      // if (e.eventtype === "LeftMouseButtonClick") {
+      //   console.log(e, "左键点击的回调");
+
+      //   Dispatch({
+      //     type: EDATA,
+      //     state: e,
+      //   });
+      // } else if (e.eventtype === "camerabeginmove") {
+      //   console.log(e, "导览开始的回调");
+      // } else if (e.eventtype === "camerastopmove") {
+      //   console.log(e, "导览结束的回调");
+      // }
+    };
     window.addEventListener("load", onload, true);
-  }, []);
+    window.addEventListener("resize", onResize, true);
+  }, [Dispatch]);
   return (
     <>
       <div className="App">
