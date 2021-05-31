@@ -84,7 +84,7 @@ const Home = () => {
       settagNum(tagNum + 1);
     }
     if (isOnReady) {
-      addtag();
+      // addtag();
       // eslint-disable-next-line
     }
   }, [isOnReady]);

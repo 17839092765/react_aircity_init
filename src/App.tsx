@@ -142,6 +142,18 @@ const App: FC = () => {
       player.style.height = window.innerHeight + "px";
       player.style.width = window.innerWidth + "px";
     };
+    const beforeunloadHandler = () => {
+      console.log("页面刷新前");
+      window.__g.reset();
+      window.__g.camera.set(
+        -22.46789,
+        -725.425476,
+        855.468506,
+        -34.895367,
+        -72.82061,
+        0
+      );
+    };
     const onEvent = (e: any) => {
       console.log(e, "所有模型交互的回调--没有业务逻辑");
       Clickevent(e);
@@ -160,6 +172,7 @@ const App: FC = () => {
     };
     window.addEventListener("load", onload, true);
     window.addEventListener("resize", onResize, true);
+    window.addEventListener("beforeunload", beforeunloadHandler, false);
   }, [Dispatch]);
   return (
     <>
